@@ -14,22 +14,26 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.inventory.inventory.application.service.InventoryService;
+import com.inventory.inventory.application.service.XlsxExportService;
 import com.inventory.inventory.application.service.XlsxService;
 import com.inventory.inventory.domain.model.Item;
 
 @RestController
 @RequestMapping("/api/inventory")
 public class InventoryController {
-    
+
     @Autowired
     private XlsxService xlsxService;
+
+    @Autowired
+    private XlsxExportService xlsxExportService;
 
     @Autowired
     private InventoryService inventoryService;
 
     @PostMapping("/file")
     public ResponseEntity<Object> uploadInventoryFile(@RequestParam("file") MultipartFile file) {
-        if(file.isEmpty()) {
+        if (file.isEmpty()) {
             return ResponseEntity.badRequest().body("The archive is empty");
         }
 
@@ -43,6 +47,19 @@ public class InventoryController {
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unknow error");
         }
+    }
+
+    @GetMapping("/file")
+    public ResponseEntity<byte[]> exportInventoryFile() {
+        byte[] excelFile = xlsxExportService.exportFile();
+
+        return ResponseEntity.ok()
+                .header(
+                        "Content-Disposition",
+                        "attachment; filename=inventory.xlsx")
+                .header("Content-Type",
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+                .body(excelFile);
     }
 
     @GetMapping("/")
