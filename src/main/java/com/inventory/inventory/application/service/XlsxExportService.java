@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import javax.management.RuntimeErrorException;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -16,6 +14,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.inventory.inventory.domain.exception.FileNotCreated;
 import com.inventory.inventory.domain.model.Item;
 
 @Service
@@ -43,7 +42,7 @@ public class XlsxExportService {
             return outputStream.toByteArray();
 
         } catch (IOException e) {
-            throw new RuntimeException("Error creating Excel file", e);
+            throw new FileNotCreated("Error creating Excel file", e);
         }
     }
 
