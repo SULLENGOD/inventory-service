@@ -11,3 +11,20 @@ spring:
     hibernate:
       ddl-auto: update
     database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  tracing:
+    enabled: true
+  endpoint:
+    loggers:
+      enabled: true
+
+logging:
+  level:
+    web: DEBUG
+    org.springframework.web: DEBUG
+    org.springframework.boot.actuate: DEBUG
