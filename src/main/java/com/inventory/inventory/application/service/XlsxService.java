@@ -15,6 +15,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -27,6 +28,9 @@ public class XlsxService {
     @Autowired
     private ItemsRepository itemsRepository;
 
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+
     public List<Item> processFile(MultipartFile file) throws IOException {
         validateName(file.getOriginalFilename());
 
@@ -34,12 +38,19 @@ public class XlsxService {
             Sheet sheet = workbook.getSheetAt(0);
 
             List<Item> items = parseSheet(sheet);
-            return itemsRepository.saveAll(items);
+            itemsRepository.saveAll(items);
+
+            messagingTemplate
+                    .convertAndSend("/topic/inventoryUpdate", "The inventory was updated!");
+
+            return items;
         }
     }
 
     private void validateName(String fileName) {
-        if (fileName == null || !(fileName.endsWith(".xlsx") || fileName.endsWith(".xls"))) {
+        if (fileName == null
+                || !(fileName.endsWith(".xlsx")
+                        || fileName.endsWith(".xls"))) {
             throw new IllegalArgumentException("Archive type not valid....");
         }
     }
