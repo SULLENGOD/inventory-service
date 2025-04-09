@@ -97,15 +97,15 @@ public class XlsxService {
         item.setCode(code);
         item.setName(name);
         item.setPrice(price);
+        item.setExistence(existence);
 
         if (targetItem != null) {
-            existence += targetItem.getExistence();
             if (targetItem.getPrice() != price) {
                 item.setLastPrice(targetItem.getPrice());
+            } else {
+                item.setLastPrice(targetItem.getLastPrice());
             }
         }
-
-        item.setExistence(existence);
         return item;
     }
 

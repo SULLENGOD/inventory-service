@@ -8,11 +8,12 @@ import org.hibernate.annotations.UpdateTimestamp;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Index;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
-@Table(name = "items")
+@Table(name = "items", indexes = @Index(name = "idx_code", columnList = "code"))
 @Data
 public class Item {
 
